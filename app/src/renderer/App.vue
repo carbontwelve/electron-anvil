@@ -17,6 +17,7 @@
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
+    @import '../../node_modules/basscss/css/basscss.css';
     @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
     @import url('https://fonts.googleapis.com/css?family=Roboto');
 
