@@ -1,7 +1,7 @@
 <template>
   <div>
-    <img src="./LandingPageView/assets/logo.png" alt="electron-vue">
-    <h1>Welcome.</h1>
+    <img src="./LandingPageView/assets/anvil.png" alt="electron-vue">
+    <h1>Anvil.</h1>
     <current-page></current-page>
     <versions></versions>
     <links></links>
@@ -25,6 +25,5 @@
 <style scoped>
   img {
     margin-top: -25px;
-    width: 450px;
   }
 </style>
