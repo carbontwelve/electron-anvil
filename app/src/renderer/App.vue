@@ -1,18 +1,24 @@
 <template>
     <div id="#app">
+        <top-bar></top-bar>
         <router-view></router-view>
     </div>
 </template>
 
 <script>
     import store from 'renderer/vuex/store'
+    import TopBar from 'components/UI/TopBar'
     export default {
-        store
+        store,
+        components: {
+            TopBar
+        }
     }
 </script>
 
-<style>
-    @import url(https://fonts.googleapis.com/css?family=Lato:300);
+<style rel="stylesheet/scss" lang="scss">
+    @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+    @import url('https://fonts.googleapis.com/css?family=Roboto');
 
     * {
         margin: 0;
@@ -25,12 +31,9 @@
         box-sizing: border-box;
     }
 
-    html {
-        font-size: 100%;
-    }
-
     html,
     body {
         height: 100%;
+        font-family: 'Roboto', sans-serif;
     }
 </style>

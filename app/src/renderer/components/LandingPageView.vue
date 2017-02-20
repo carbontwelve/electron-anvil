@@ -1,5 +1,7 @@
 <template>
     <div>
+
+
         <img src="./LandingPageView/assets/anvil.png" alt="electron-vue">
         <h1>Anvil.</h1>
         <current-page></current-page>

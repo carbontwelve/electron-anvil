@@ -51,7 +51,20 @@ let rendererConfig = {
           options: {
             loaders: {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
-              scss: 'vue-style-loader!css-loader!sass-loader'
+              scss: ExtractTextPlugin.extract({
+                use: [
+                  {
+                    loader: 'css-loader'
+                  }, {
+                    loader: 'sass-loader',
+                    options: {
+                      data: "@import 'variables.scss';",
+                      includePaths: path.resolve(__dirname, 'app/src/renderer/styles')
+                    }
+                  }
+                ],
+                fallback: 'vue-style-loader'
+              })
             }
           }
         }
