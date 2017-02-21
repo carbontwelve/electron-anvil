@@ -18,14 +18,14 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     // If the user is not yet installed, redirect to the installer
-    // if (!App.$store.getters.isInstalled && to.name !== 'Install') {
-    //   return next('/install')
-    // }
+    if (!App.store.getters.isInstalled && to.name !== 'install-page') {
+        return next('/i')
+    }
 
     // If the user is attempting to visit the installer, and we are already installed, redirect to Projects page
-    // if (App.$store.getters.isInstalled && to.name === 'Install') {
-    //   return next('/')
-    // }
+    if (App.store.getters.isInstalled && to.name === 'install-page') {
+        return next('/')
+    }
 
     // Until the user has a selected project limit them to only accessing the Projects page
     // if (App.$store.getters.isInstalled && !store.getters.hasSelectedProject && to.name !== 'Projects') {
