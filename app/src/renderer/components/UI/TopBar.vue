@@ -6,25 +6,25 @@
             </ui-icon-button>
         </div>
         <div slot="icon">
-            <ui-icon-button color="white" has-dropdown icon="menu" ref="dropdownButton51" size="large" type="secondary">
+            <ui-icon-button color="white" has-dropdown icon="menu" ref="mainNavLinks" size="large" type="secondary">
                 <div class="p2 flex flex-wrap" slot="dropdown" style="max-width: 25.5rem;">
                     <div class="p1 flex-auto center">
-                        <router-link :to="{ name: 'dashboard-page'}" class="main-nav--link" @click="$refs.dropdownButton51.closeDropdown()">
+                        <a href="#" @click="navigate({name: 'dashboard-page'}, $event)" class="main-nav--link">
                             <i class="material-icons">dashboard</i><br>
                             Dashboard
-                        </router-link>
+                        </a>
                     </div>
                     <div class="p1 flex-auto center">
-                        <router-link :to="{ name: 'site-page'}" class="main-nav--link" @click="$refs.dropdownButton51.closeDropdown()">
+                        <a href="#" @click="navigate({name: 'site-page'}, $event)" class="main-nav--link">
                             <i class="material-icons">folder</i><br>
                             Site
-                        </router-link>
+                        </a>
                     </div>
                     <div class="p1 flex-auto center">
-                        <router-link :to="{ name: 'system-page'}" class="main-nav--link" @click="$refs.dropdownButton51.closeDropdown()">
+                        <a href="#" @click="navigate({name: 'system-page'}, $event)" class="main-nav--link">
                             <i class="material-icons">settings</i><br>
                             System
-                        </router-link>
+                        </a>
                     </div>
                 </div>
             </ui-icon-button>
@@ -65,8 +65,9 @@
             UiToolbar
         },
         methods: {
-            displayMenu () {
-                // ...
+            navigate (to, e) {
+                e.preventDefault()
+                this.$router.push(to, () => { this.$refs.mainNavLinks.closeDropdown() })
             }
         }
     }
