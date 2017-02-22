@@ -10,6 +10,12 @@ const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
+// Trace: loaderUtils.parseQuery() received a non-string value which can be problematic,
+// see https://github.com/webpack/loader-utils/issues/56 parseQuery() will be replaced with
+// getOptions() in the next major version of loader-utils.
+
+// process.traceDeprecation = true
+
 let rendererConfig = {
   devtool: '#eval-source-map',
   devServer: { overlay: true },
