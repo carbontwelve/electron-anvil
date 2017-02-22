@@ -61,7 +61,10 @@ const mutations = {
         state.current.name = payload
     },
     [types.UPDATE_WORKSPACE] (state, payload) {
-        // ...
+        let currentWorkspace = state.items.find((v) => {
+            return v.name === state.current.name
+        })
+        console.log(currentWorkspace)
     }
 }
 
@@ -79,6 +82,9 @@ const actions = {
     },
     setWorkspace ({state, dispatch, commit}, payload) {
         commit(types.SET_WORKSPACE, payload)
+    },
+    updateWorkspace ({state, dispatch, commit}, payload) {
+        // ...
     }
 }
 
