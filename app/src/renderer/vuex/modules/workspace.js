@@ -1,6 +1,7 @@
 const types = {
     ADD_WORKSPACE: 'ADD_WORKSPACE',
-    SET_WORKSPACE: 'SET_WORKSPACE'
+    SET_WORKSPACE: 'SET_WORKSPACE',
+    UPDATE_WORKSPACE: 'UPDATE_WORKSPACE'
 }
 
 // let defaultFile = {
@@ -15,8 +16,6 @@ const types = {
 let defaultWorkspace = {
     name: '',
     files: {
-        items: [],
-        selected: null,
         template: '---\ntitle: Hello World!\ndraft: true\n---\nAn unfinished article...'
     },
     uploads: [],
@@ -43,30 +42,37 @@ let defaultWorkspace = {
 
 const state = {
     current: {
-        ...defaultWorkspace
+        name: '',
+        files: {
+            items: []
+        }
     },
     items: []
 }
 
 const mutations = {
     [types.ADD_WORKSPACE] (state, payload) {
-        let newWorkspace = defaultWorkspace
-        newWorkspace.name = payload.name
-        state.items.push(newWorkspace)
+        state.items.push(payload)
     },
     [types.SET_WORKSPACE] (state, payload) {
-        state.current = state.items.find((v) => {
-            return v.name === payload.name
-        })
+        // state.current.item = state.items.find((v) => {
+        //     return v.name === payload.name
+        // })
+        state.current.name = payload
+    },
+    [types.UPDATE_WORKSPACE] (state, payload) {
+        // ...
     }
 }
 
 const actions = {
     addWorkspace ({state, dispatch, commit}, payload) {
         return new Promise((resolve, reject) => {
-            commit(types.ADD_WORKSPACE, payload)
+            let newWorkspace = Object.assign({}, defaultWorkspace)
+            newWorkspace.name = payload.name
+            commit(types.ADD_WORKSPACE, newWorkspace)
             if (payload.setDefault) {
-                commit(types.SET_WORKSPACE, payload)
+                commit(types.SET_WORKSPACE, payload.name)
             }
             resolve()
         })
@@ -82,6 +88,11 @@ const getters = {
     },
     currentWorkspaceName: (state) => {
         return (state.current.name) ? state.current.name : ''
+    },
+    currentWorkspace: (state, getters) => {
+        return state.items.find((v) => {
+            return v.name === getters.currentWorkspaceName
+        })
     }
 }
 
