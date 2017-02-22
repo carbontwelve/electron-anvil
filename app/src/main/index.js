@@ -11,31 +11,31 @@ function createWindow () {
   /**
    * Initial window options
    */
-  mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800
-  })
+    mainWindow = new BrowserWindow({
+        height: 600,
+        width: 800
+    })
 
-  mainWindow.loadURL(winURL)
+    mainWindow.loadURL(winURL)
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
+    mainWindow.on('closed', () => {
+        mainWindow = null
+    })
 
   // eslint-disable-next-line no-console
-  console.log('mainWindow opened')
+    console.log('mainWindow opened')
 }
 
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) {
-    createWindow()
-  }
+    if (mainWindow === null) {
+        createWindow()
+    }
 })

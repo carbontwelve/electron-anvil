@@ -59,7 +59,7 @@ let rendererConfig = {
                     loader: 'sass-loader',
                     options: {
                       data: "@import 'variables.scss';",
-                      includePaths: path.resolve(__dirname, 'app/src/renderer/styles')
+                      includePaths: [path.resolve(__dirname, 'app/src/renderer/styles')]
                     }
                   }
                 ],
