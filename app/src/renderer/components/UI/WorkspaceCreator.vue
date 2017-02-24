@@ -1,5 +1,5 @@
 <template>
-    <div class="workspace-creator p4" :class="{ 'off-screen': workspaceCreatorVisible }">
+    <div class="workspace-creator p4" :class="{ 'off-screen': !workspaceCreatorVisible }">
         <h1 class="mb3">Create new workspace</h1>
         <workspace-name v-if="stage === 'name'" v-bind:name="workspace.name" v-on:nextStage.once="nextStage"></workspace-name>
         <workspace-meta v-if="stage === 'meta'" v-bind:meta="workspace.metadata" v-on:nextStage.once="nextStage" v-on:prevStage.once="prevStage"></workspace-meta>
@@ -8,6 +8,7 @@
 </template>
 
 <script>
+    import { getDefaultWorkspace } from '../../vuex/modules/workspace'
     import { mapGetters } from 'vuex'
     import WorkspaceName from './WorkspaceCreator/WorkspaceName'
     import WorkspaceMeta from './WorkspaceCreator/WorkspaceMeta'
@@ -16,9 +17,12 @@
         name: 'workspace-creator',
         data () {
             return {
-                workspace: this.$store.getters.getDefaultWorkspace,
+                workspace: {},
                 stage: 'name'
             }
+        },
+        created () {
+            this.workspace = getDefaultWorkspace()
         },
         components: {
             WorkspaceName,
@@ -47,12 +51,10 @@
                     let _vm = this
                     this.workspace.collections.items = e
                     this.$store.dispatch('addWorkspace', this.workspace).then(() => {
-                        return new Promise((resolve, reject) => {
-                            _vm.$store.dispatch('toggleWorkspaceCreatorVisibility')
-                            resolve()
-                        })
-                    }).then(() => {
-                        _vm.reset()
+                        console.log(getDefaultWorkspace())
+                        _vm.workspace = getDefaultWorkspace()
+                        _vm.stage = 'name'
+                        _vm.$store.dispatch('toggleWorkspaceCreatorVisibility')
                     })
                     break
                 }
@@ -66,10 +68,6 @@
                     this.stage = 'meta'
                     break
                 }
-            },
-            reset () {
-                this.workspace = this.$store.getters.getDefaultWorkspace
-                this.state = 'name'
             }
         }
     }

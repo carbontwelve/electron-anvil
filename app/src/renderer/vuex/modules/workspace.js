@@ -71,12 +71,6 @@ const mutations = {
 const actions = {
     addWorkspace ({state, dispatch, commit}, payload) {
         return new Promise((resolve, reject) => {
-            // let newWorkspace = Object.assign({}, defaultWorkspace)
-            // newWorkspace.name = payload.name
-            // commit(types.ADD_WORKSPACE, newWorkspace)
-            // if (payload.setDefault) {
-            //     commit(types.SET_WORKSPACE, payload.name)
-            // }
             commit(types.ADD_WORKSPACE, payload)
             resolve()
         })
@@ -109,10 +103,12 @@ const getters = {
         return state.items.find((v) => {
             return v.name === name
         })
-    },
-    getDefaultWorkspace: (state) => {
-        return Object.assign({}, defaultWorkspace)
     }
+}
+
+export function getDefaultWorkspace () {
+    console.log('getDefaultWorkspace')
+    return JSON.parse(JSON.stringify(defaultWorkspace))
 }
 
 export default {state, mutations, actions, getters, types}
