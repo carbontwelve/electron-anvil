@@ -14,7 +14,14 @@
             ></ui-textbox>
         </div>
         <div class="py2 right-align">
-            <ui-button raised size="large" :disabled="!canContinue || projectName.length < 1" v-on:click.once="nextStage">Continue</ui-button>
+            <ul class="list-reset clear-fix">
+                <li class="right">
+                    <ui-button raised size="large" :disabled="!canContinue || projectName.length < 1" v-on:click.once="nextStage">Continue</ui-button>
+                </li>
+                <li class="right mr2">
+                    <ui-button size="large" v-on:click="quit" icon="cancel" type="secondary" color="orange">Cancel</ui-button>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -60,7 +67,16 @@
                 if (this.canContinue) {
                     this.$emit('nextStage', this.projectName)
                 }
+            },
+            quit () {
+                this.$emit('quit')
             }
         }
     }
 </script>
+
+<style>
+    .ui-button--type-secondary:hover:not(.is-disabled), .ui-button--type-secondary.has-dropdown-open, .ui-button--type-secondary.has-focus-ring:focus, body[modality="keyboard"] .ui-button--type-secondary:focus {
+        background-color: transparent !important;
+    }
+</style>

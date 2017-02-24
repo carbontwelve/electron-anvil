@@ -1,7 +1,7 @@
 <template>
     <div class="workspace-creator p4" :class="{ 'off-screen': !workspaceCreatorVisible }">
         <h1 class="mb3">Create new workspace</h1>
-        <workspace-name v-if="stage === 'name'" v-bind:name="workspace.name" v-on:nextStage.once="nextStage"></workspace-name>
+        <workspace-name v-if="stage === 'name'" v-bind:name="workspace.name" v-on:nextStage.once="nextStage" v-on:quit="quit"></workspace-name>
         <workspace-meta v-if="stage === 'meta'" v-bind:meta="workspace.metadata" v-on:nextStage.once="nextStage" v-on:prevStage.once="prevStage"></workspace-meta>
         <workspace-collections v-if="stage === 'collections'" v-bind:collections="workspace.collections.items" v-on:nextStage.once="nextStage" v-on:prevStage.once="prevStage"></workspace-collections>
     </div>
@@ -13,6 +13,7 @@
     import WorkspaceName from './WorkspaceCreator/WorkspaceName'
     import WorkspaceMeta from './WorkspaceCreator/WorkspaceMeta'
     import WorkspaceCollections from './WorkspaceCreator/WorkspaceCollections'
+
     export default {
         name: 'workspace-creator',
         data () {
@@ -51,10 +52,7 @@
                     let _vm = this
                     this.workspace.collections.items = e
                     this.$store.dispatch('addWorkspace', this.workspace).then(() => {
-                        console.log(getDefaultWorkspace())
-                        _vm.workspace = getDefaultWorkspace()
-                        _vm.stage = 'name'
-                        _vm.$store.dispatch('toggleWorkspaceCreatorVisibility')
+                        _vm.quit()
                     })
                     break
                 }
@@ -68,6 +66,11 @@
                     this.stage = 'meta'
                     break
                 }
+            },
+            quit () {
+                this.workspace = getDefaultWorkspace()
+                this.stage = 'name'
+                this.$store.dispatch('toggleWorkspaceCreatorVisibility')
             }
         }
     }
