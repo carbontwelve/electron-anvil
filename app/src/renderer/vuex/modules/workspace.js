@@ -71,12 +71,13 @@ const mutations = {
 const actions = {
     addWorkspace ({state, dispatch, commit}, payload) {
         return new Promise((resolve, reject) => {
-            let newWorkspace = Object.assign({}, defaultWorkspace)
-            newWorkspace.name = payload.name
-            commit(types.ADD_WORKSPACE, newWorkspace)
-            if (payload.setDefault) {
-                commit(types.SET_WORKSPACE, payload.name)
-            }
+            // let newWorkspace = Object.assign({}, defaultWorkspace)
+            // newWorkspace.name = payload.name
+            // commit(types.ADD_WORKSPACE, newWorkspace)
+            // if (payload.setDefault) {
+            //     commit(types.SET_WORKSPACE, payload.name)
+            // }
+            commit(types.ADD_WORKSPACE, payload)
             resolve()
         })
     },
@@ -92,13 +93,25 @@ const getters = {
     isInstalled: (state, getters) => {
         return state.items.length > 0
     },
+    workspaces: (state) => {
+        return state.items
+    },
     currentWorkspaceName: (state) => {
         return (state.current.name) ? state.current.name : ''
     },
     currentWorkspace: (state, getters) => {
+        return getters.getWorkspace(getters.currentWorkspaceName)
+        // return state.items.find((v) => {
+        //     return v.name === getters.currentWorkspaceName
+        // })
+    },
+    getWorkspace: (state) => (name) => {
         return state.items.find((v) => {
-            return v.name === getters.currentWorkspaceName
+            return v.name === name
         })
+    },
+    getDefaultWorkspace: (state) => {
+        return Object.assign({}, defaultWorkspace)
     }
 }
 
