@@ -1,3 +1,8 @@
+// const PassThrough = {
+//     name: 'PassThrough',
+//     template: '<router-view></router-view>'
+// }
+
 export default [
     {
         path: '/i',
@@ -16,9 +21,9 @@ export default [
         }
     },
     {
-        path: '/site',
-        name: 'site-page',
-        component: require('components/SitePageView'),
+        path: '/collection/:collection',
+        name: 'collection-page',
+        component: require('components/CollectionPageView'),
         meta: {
             name: 'Site'
         }

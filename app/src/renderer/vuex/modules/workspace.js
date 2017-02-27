@@ -1,7 +1,11 @@
+import fs from 'fs-jetpack'
+// maybe import https://nodejs.org/api/path.html for linux/windows compatibility within getWorkspacePath ?
 const types = {
     ADD_WORKSPACE: 'ADD_WORKSPACE',
     SET_WORKSPACE: 'SET_WORKSPACE',
-    UPDATE_WORKSPACE: 'UPDATE_WORKSPACE'
+    UPDATE_WORKSPACE: 'UPDATE_WORKSPACE',
+    SET_CURRENT_FILES: 'SET_CURRENT_FILES',
+    SET_CURRENT_FILES_TOTAL_PAGES: 'SET_CURRENT_FILES_TOTAL_PAGES'
 }
 
 // let defaultFile = {
@@ -44,7 +48,11 @@ const state = {
     current: {
         name: '',
         files: {
-            items: []
+            items: [],
+            loaded: [],
+            itemsPerPage: 15,
+            totalPages: 0,
+            currentPage: 1
         }
     },
     items: []
@@ -62,6 +70,14 @@ const mutations = {
             return v.name === state.current.name
         })
         console.log(currentWorkspace)
+        // @todo finish...
+    },
+    [types.SET_CURRENT_FILES] (state, payload) {
+        console.log('sync current files')
+        state.current.files.items = payload
+    },
+    [types.SET_CURRENT_FILES_TOTAL_PAGES] (state, payload) {
+        state.current.files.totalPages = payload
     }
 }
 
@@ -74,6 +90,25 @@ const actions = {
             }
             resolve()
         })
+    },
+    syncWorkspaceFiles ({state, dispatch, commit}, payload) {
+        let files = payload.fileSystem.find({matching: payload.collection})
+        commit(types.SET_CURRENT_FILES, files)
+
+        let totalPages = Math.floor(state.current.files.items.length / state.current.files.itemsPerPage)
+        if (totalPages < 1) {
+            totalPages = 1
+        }
+        commit(types.SET_CURRENT_FILES_TOTAL_PAGES, totalPages)
+        for (let i = 0; i < state.current.files.itemsPerPage; i++) {
+            console.log(i + ' ' + state.current.files.items.length)
+            let f = payload.fileSystem.path(state.current.files.items[i])
+            let fC = fs.read(f)
+            console.log(f + ':' + fC)
+            if ((i + 1) >= state.current.files.items.length) {
+                break
+            }
+        }
     },
     setWorkspace ({state, dispatch, commit}, payload) {
         commit(types.SET_WORKSPACE, payload)
@@ -98,14 +133,14 @@ const getters = {
     },
     currentWorkspace: (state, getters) => {
         return getters.getWorkspace(getters.currentWorkspaceName)
-        // return state.items.find((v) => {
-        //     return v.name === getters.currentWorkspaceName
-        // })
     },
     getWorkspace: (state) => (name) => {
         return state.items.find((v) => {
             return v.name === name
         })
+    },
+    getWorkspacePath: (state, getters) => {
+        return fs.cwd('workspaces/' + getters.currentWorkspace.name)
     }
 }
 
