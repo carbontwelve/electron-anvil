@@ -1,10 +1,12 @@
 <template>
     <div class="workspace-switcher flex-none" :class="{ 'off-screen': displayOnScreen }">
         <ul class="list-reset">
-            <li v-for="(workspace, index) in workspaces">
+            <template v-if="isInstalled" v-for="(workspace, index) in workspaces">
+            <li>
                 <a href="#" :class="{selected: (currentWorkspace.name === workspace.name)}" @click="switchWorkspace(workspace)">{{ workspace.name.charAt(0).toUpperCase() + workspace.name.slice(-1) }}</a>
                 <span>Ctrl + {{ index }}</span>
             </li>
+            </template>
             <li>
                 <a href="#" @click="showWorkspaceCreator"><i class="material-icons">library_add</i></a>
             </li>
@@ -16,30 +18,23 @@
     import { mapGetters } from 'vuex'
     export default {
         name: 'workspace-switcher',
-        data () {
-            return {
-                isHidden: false
-            }
-        },
         computed: {
             ...mapGetters([
                 'isInstalled',
                 'workspaces',
-                'currentWorkspace'
+                'currentWorkspace',
+                'workspaceSwitcherVisible'
             ]),
             displayOnScreen () {
                 if (!this.isInstalled) {
                     return false
                 }
-                return this.isHidden
+                return !this.workspaceSwitcherVisible
             }
         },
         methods: {
             switchWorkspace (w) {
                 this.$store.dispatch('setWorkspace', w.name)
-            },
-            switchVisibility () {
-                this.isHidden = !this.isHidden
             },
             showWorkspaceCreator () {
                 this.$store.dispatch('toggleWorkspaceCreatorVisibility')

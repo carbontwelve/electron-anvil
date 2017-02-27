@@ -31,9 +31,11 @@ const fsStoragePlugin = store => {
             }
             if (len > 1) {
                 let selectedWorkspace = window.localStorage.getItem('selectedWorkspace')
-                if (selectedWorkspace) {
+                if (selectedWorkspace && store.getters.getWorkspace(selectedWorkspace)) {
                     store.commit(Workspace.types.SET_WORKSPACE, selectedWorkspace)
-                } else if (store.state.workspace.items[0]) {
+                    return resolve()
+                }
+                if (store.state.workspace.items[0]) {
                     store.commit(Workspace.types.SET_WORKSPACE, store.state.workspace.items[0].name)
                 } else {
                     return reject('No selected workspace could be found')

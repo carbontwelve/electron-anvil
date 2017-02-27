@@ -90,7 +90,10 @@ const getters = {
     workspaces: (state) => {
         return state.items
     },
-    currentWorkspaceName: (state) => {
+    currentWorkspaceName: (state, getters) => {
+        if (state.current.name === '' && getters.isInstalled) {
+            return state.items[0]
+        }
         return (state.current.name) ? state.current.name : ''
     },
     currentWorkspace: (state, getters) => {
