@@ -3,7 +3,10 @@
         <workspace-creator></workspace-creator>
         <workspace-switcher></workspace-switcher>
         <main class="app-container flex-auto">
-            <router-view></router-view>
+            <div class="flex">
+                <workspace-menu></workspace-menu>
+                <router-view class="flex-auto"></router-view>
+            </div>
         </main>
     </div>
 </template>
@@ -13,12 +16,14 @@
     import BottomBar from 'components/UI/BottomBar'
     import WorkspaceSwitcher from 'components/UI/WorkspaceSwitcher'
     import WorkspaceCreator from 'components/UI/WorkspaceCreator'
+    import WorkspaceMenu from 'components/UI/WorkspaceMenu'
     export default {
         store,
         components: {
             BottomBar,
             WorkspaceSwitcher,
-            WorkspaceCreator
+            WorkspaceCreator,
+            WorkspaceMenu
         }
     }
 </script>
