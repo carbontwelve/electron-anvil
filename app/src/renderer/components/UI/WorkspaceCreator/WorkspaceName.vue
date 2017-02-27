@@ -18,7 +18,7 @@
                 <li class="right">
                     <ui-button raised size="large" :disabled="!canContinue || projectName.length < 1" v-on:click.once="nextStage">Continue</ui-button>
                 </li>
-                <li class="right mr2">
+                <li class="right mr2" v-if="isInstalled">
                     <ui-button size="large" v-on:click="quit" icon="cancel" type="secondary" color="orange">Cancel</ui-button>
                 </li>
             </ul>
@@ -46,7 +46,8 @@
         },
         computed: {
             ...mapGetters([
-                'getWorkspace'
+                'getWorkspace',
+                'isInstalled'
             ])
         },
         methods: {

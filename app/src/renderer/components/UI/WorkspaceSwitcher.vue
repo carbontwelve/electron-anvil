@@ -3,7 +3,7 @@
         <ul class="list-reset">
             <template v-if="isInstalled" v-for="(workspace, index) in workspaces">
             <li>
-                <a href="#" :class="{selected: (currentWorkspace.name === workspace.name)}" @click="switchWorkspace(workspace)">{{ workspace.name.charAt(0).toUpperCase() + workspace.name.slice(-1) }}</a>
+                <a href="#" :class="{selected: (currentWorkspace.name === workspace.name)}" @click="switchWorkspace(workspace, $event)">{{ workspace.name.charAt(0).toUpperCase() + workspace.name.slice(-1) }}</a>
                 <span>Ctrl + {{ index }}</span>
             </li>
             </template>
@@ -33,10 +33,16 @@
             }
         },
         methods: {
-            switchWorkspace (w) {
+            switchWorkspace (w, e) {
+                e.preventDefault()
+                if (this.currentWorkspace.name === w.name) {
+                    return
+                }
                 this.$store.dispatch('setWorkspace', w.name)
+                this.$router.push({ name: 'dashboard' })
             },
-            showWorkspaceCreator () {
+            showWorkspaceCreator (e) {
+                e.preventDefault()
                 this.$store.dispatch('toggleWorkspaceCreatorVisibility')
             }
         }

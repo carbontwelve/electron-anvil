@@ -68,9 +68,9 @@
                 }
             },
             quit () {
+                this.$store.dispatch('toggleWorkspaceCreatorVisibility')
                 this.workspace = getDefaultWorkspace()
                 this.stage = 'name'
-                this.$store.dispatch('toggleWorkspaceCreatorVisibility')
             }
         }
     }
