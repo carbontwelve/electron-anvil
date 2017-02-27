@@ -27,7 +27,7 @@
             ]),
             displayOnScreen () {
                 if (!this.isInstalled) {
-                    return false
+                    return true
                 }
                 return !this.workspaceSwitcherVisible
             }
@@ -56,7 +56,7 @@
         left:0;
 
         &.off-screen{
-            left: -62px;
+            width: 0;
         }
 
         ul{
