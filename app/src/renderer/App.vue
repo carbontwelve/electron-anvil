@@ -3,7 +3,6 @@
         <workspace-creator></workspace-creator>
         <workspace-switcher></workspace-switcher>
         <main class="app-container flex-auto">
-            <top-bar></top-bar>
             <router-view></router-view>
         </main>
     </div>
@@ -11,14 +10,12 @@
 
 <script>
     import store from 'renderer/vuex/store'
-    import TopBar from 'components/UI/TopBar'
     import BottomBar from 'components/UI/BottomBar'
     import WorkspaceSwitcher from 'components/UI/WorkspaceSwitcher'
     import WorkspaceCreator from 'components/UI/WorkspaceCreator'
     export default {
         store,
         components: {
-            TopBar,
             BottomBar,
             WorkspaceSwitcher,
             WorkspaceCreator
