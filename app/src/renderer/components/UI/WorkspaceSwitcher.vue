@@ -39,7 +39,7 @@
                     return
                 }
                 this.$store.dispatch('setWorkspace', w.name)
-                this.$router.push({ name: 'dashboard' })
+                this.$router.push({ name: 'dashboard-page' })
             },
             showWorkspaceCreator (e) {
                 e.preventDefault()

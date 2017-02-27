@@ -52,6 +52,8 @@
                     let _vm = this
                     this.workspace.collections.items = e
                     this.$store.dispatch('addWorkspace', this.workspace).then(() => {
+                        _vm.$store.dispatch('setWorkspace', _vm.workspace.name)
+                        _vm.$router.push({ name: 'dashboard-page' })
                         _vm.quit()
                     })
                     break
