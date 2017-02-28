@@ -2,7 +2,7 @@
     <div class="site-page">
         <div class="workspace-header-bar flex items-center clearfix">
             <p class="h3 flex-auto">Content / {{ $route.params.collection }}</p>
-            <ui-button color="green" raised>New post</ui-button>
+            <ui-button color="green" raised v-on:click="createNewFile">New post</ui-button>
         </div>
         <div class="flex workspace-content">
             <div class="col-3 flex-auto content-list">
@@ -74,7 +74,10 @@
                 this.currentPreview = '<h1>' + f.title + '</h1><br>' + f.content
             },
             editCurrentFile () {
-                // ...
+                this.$router.push({name: 'edit-file-page', params: {collection: this.$route.params.collection, file: this.currentFile}})
+            },
+            createNewFile () {
+                this.$router.push({name: 'edit-file-page', params: {collection: this.$route.params.collection, file: ''}})
             }
         }
     }
@@ -82,7 +85,7 @@
 
 <style rel="stylesheet/scss" lang="scss">
     .workspace-ident, .workspace-header-bar{
-        border-bottom: 1px solid #e2e2e2;
+        border-bottom: 2px solid #e2e2e2;
         max-height: 68px;
         height: 68px;
     }

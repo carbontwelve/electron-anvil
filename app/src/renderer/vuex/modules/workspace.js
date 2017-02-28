@@ -1,13 +1,34 @@
 import fs from 'fs-jetpack'
 import matter from 'gray-matter'
 // maybe import https://nodejs.org/api/path.html for linux/windows compatibility within getWorkspacePath ?
+
+// https://gist.github.com/mathewbyrne/1280286
+function slugify (text) {
+    /* eslint-disable no-useless-escape */
+    const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;'
+    const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------'
+    const p = new RegExp(a.split('').join('|'), 'g')
+
+    return text.toString().toLowerCase()
+        .replace(/\s+/g, '-')           // Replace spaces with -
+        .replace(p, c =>
+            b.charAt(a.indexOf(c)))     // Replace special chars
+        .replace(/&/g, '-and-')         // Replace & with 'and'
+        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+        .replace(/^-+/, '')             // Trim - from start of text
+        .replace(/-+$/, '')             // Trim - from end of text
+    /* eslint-enable no-useless-escape */
+}
+
 const types = {
     ADD_WORKSPACE: 'ADD_WORKSPACE',
     SET_WORKSPACE: 'SET_WORKSPACE',
     UPDATE_WORKSPACE: 'UPDATE_WORKSPACE',
     RESET_CURRENT_FILES: 'RESET_CURRENT_FILES',
     SET_CURRENT_FILES: 'SET_CURRENT_FILES',
-    SET_CURRENT_FILES_LOADED: 'SET_CURRENT_FILES_LOADED'
+    SET_CURRENT_FILES_LOADED: 'SET_CURRENT_FILES_LOADED',
+    SET_CURRENT_FILE: 'SET_CURRENT_FILE'
 }
 
 // let defaultFile = {
@@ -51,8 +72,10 @@ const state = {
         name: '',
         files: {
             items: [],
-            loaded: {}
-        }
+            loaded: {},
+            isLoaded: false
+        },
+        file: {}
     },
     items: []
 }
@@ -61,7 +84,8 @@ const mutations = {
     [types.RESET_CURRENT_FILES] (state, payload) {
         state.current.files = {
             items: [],
-            loaded: {}
+            loaded: {},
+            isLoaded: false
         }
     },
     [types.ADD_WORKSPACE] (state, payload) {
@@ -83,6 +107,9 @@ const mutations = {
     },
     [types.SET_CURRENT_FILES_LOADED] (state, payload) {
         state.current.files.loaded[payload.key] = payload.value
+    },
+    [types.SET_CURRENT_FILE] (state, payload) {
+        state.current.file = payload
     }
 }
 
@@ -108,6 +135,7 @@ const actions = {
                     let tmp = parsedFileContent.data
                     tmp.content = parsedFileContent.content
                     tmp.stats = payload.fileSystem.inspect(f, {checksum: 'sha256', times: true})
+                    tmp.exists = true
                     commit(types.SET_CURRENT_FILES_LOADED, {key: state.current.files.items[i], value: tmp})
                 }
             }
@@ -119,6 +147,49 @@ const actions = {
     },
     updateWorkspace ({state, dispatch, commit}, payload) {
         // ...
+    },
+    getWorkspaceFile ({state, dispatch, commit}, name) {
+        return new Promise((resolve, reject) => {
+            // If this is a new file
+            if (!name || (name && name.length < 1)) {
+                let workspace = state.items.find((i) => {
+                    return i.name === state.current.name
+                })
+                let parsedFileContent = matter(JSON.parse(JSON.stringify(workspace.files.template)))
+                let f = parsedFileContent.data
+                f.content = parsedFileContent.content
+                f.stats = {}
+                f.exists = false
+                commit(types.SET_CURRENT_FILE, f)
+                return resolve(f)
+            } else {
+                let f = state.current.files.loaded[name]
+                if (f) {
+                    commit(types.SET_CURRENT_FILE, f)
+                    return resolve(f)
+                } else {
+                    return reject('No file with the name [' + name + '] could be found.')
+                }
+            }
+        })
+    },
+    setWorkspaceFile ({state, dispatch, commit}, payload) {
+        return new Promise((resolve, reject) => {
+            console.log('setWorkspaceFile')
+            // This is a brand new file!
+            if (payload.exists === false) {
+                let fileName = slugify(payload.title)
+                let frontMatter = {}
+                Object.keys(payload).forEach((key, pos) => {
+                    if (key !== 'stats' && key !== 'exists' && key !== 'content') {
+                        frontMatter[key] = payload[key]
+                    }
+                })
+                let fileContent = matter.stringify(payload.content, frontMatter)
+                console.log('Saving to [' + fileName + '.md] the content:')
+                console.log(fileContent)
+            }
+        })
     }
 }
 
@@ -148,6 +219,9 @@ const getters = {
     },
     getWorkspaceFiles: (state, getters) => {
         return state.current.files
+    },
+    getCurrentFile: (state) => {
+        return state.current.file
     }
 }
 

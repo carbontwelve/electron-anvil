@@ -29,6 +29,14 @@ export default [
         }
     },
     {
+        path: '/collection/:collection/edit/:file?',
+        name: 'edit-file-page',
+        component: require('components/FileEditorView'),
+        meta: {
+            name: 'Site'
+        }
+    },
+    {
         path: '/system',
         name: 'system-page',
         component: require('components/SystemPageView'),
