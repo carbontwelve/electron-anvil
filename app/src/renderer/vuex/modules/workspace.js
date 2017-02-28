@@ -1,11 +1,13 @@
 import fs from 'fs-jetpack'
+import matter from 'gray-matter'
 // maybe import https://nodejs.org/api/path.html for linux/windows compatibility within getWorkspacePath ?
 const types = {
     ADD_WORKSPACE: 'ADD_WORKSPACE',
     SET_WORKSPACE: 'SET_WORKSPACE',
     UPDATE_WORKSPACE: 'UPDATE_WORKSPACE',
+    RESET_CURRENT_FILES: 'RESET_CURRENT_FILES',
     SET_CURRENT_FILES: 'SET_CURRENT_FILES',
-    SET_CURRENT_FILES_TOTAL_PAGES: 'SET_CURRENT_FILES_TOTAL_PAGES'
+    SET_CURRENT_FILES_LOADED: 'SET_CURRENT_FILES_LOADED'
 }
 
 // let defaultFile = {
@@ -49,16 +51,19 @@ const state = {
         name: '',
         files: {
             items: [],
-            loaded: [],
-            itemsPerPage: 15,
-            totalPages: 0,
-            currentPage: 1
+            loaded: {}
         }
     },
     items: []
 }
 
 const mutations = {
+    [types.RESET_CURRENT_FILES] (state, payload) {
+        state.current.files = {
+            items: [],
+            loaded: {}
+        }
+    },
     [types.ADD_WORKSPACE] (state, payload) {
         state.items.push(payload)
     },
@@ -76,8 +81,8 @@ const mutations = {
         console.log('sync current files')
         state.current.files.items = payload
     },
-    [types.SET_CURRENT_FILES_TOTAL_PAGES] (state, payload) {
-        state.current.files.totalPages = payload
+    [types.SET_CURRENT_FILES_LOADED] (state, payload) {
+        state.current.files.loaded[payload.key] = payload.value
     }
 }
 
@@ -94,24 +99,23 @@ const actions = {
     syncWorkspaceFiles ({state, dispatch, commit}, payload) {
         let files = payload.fileSystem.find({matching: payload.collection})
         commit(types.SET_CURRENT_FILES, files)
-
-        let totalPages = Math.floor(state.current.files.items.length / state.current.files.itemsPerPage)
-        if (totalPages < 1) {
-            totalPages = 1
-        }
-        commit(types.SET_CURRENT_FILES_TOTAL_PAGES, totalPages)
-        for (let i = 0; i < state.current.files.itemsPerPage; i++) {
-            console.log(i + ' ' + state.current.files.items.length)
-            let f = payload.fileSystem.path(state.current.files.items[i])
-            let fC = fs.read(f)
-            console.log(f + ':' + fC)
-            if ((i + 1) >= state.current.files.items.length) {
-                break
+        if (files.length > 0) {
+            let len = files.length
+            for (let i = 0; i < len; i++) {
+                let f = payload.fileSystem.path(files[i])
+                if (f) {
+                    let parsedFileContent = matter(fs.read(f))
+                    let tmp = parsedFileContent.data
+                    tmp.content = parsedFileContent.content
+                    tmp.stats = payload.fileSystem.inspect(f, {checksum: 'sha256', times: true})
+                    commit(types.SET_CURRENT_FILES_LOADED, {key: state.current.files.items[i], value: tmp})
+                }
             }
         }
     },
     setWorkspace ({state, dispatch, commit}, payload) {
         commit(types.SET_WORKSPACE, payload)
+        commit(types.RESET_CURRENT_FILES)
     },
     updateWorkspace ({state, dispatch, commit}, payload) {
         // ...
@@ -141,6 +145,9 @@ const getters = {
     },
     getWorkspacePath: (state, getters) => {
         return fs.cwd('workspaces/' + getters.currentWorkspace.name)
+    },
+    getWorkspaceFiles: (state, getters) => {
+        return state.current.files
     }
 }
 

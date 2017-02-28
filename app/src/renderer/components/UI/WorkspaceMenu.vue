@@ -1,5 +1,5 @@
 <template>
-    <div class="workspace-menu sm-col-4 md-col-3 lg-col-2">
+    <div class="workspace-menu sm-col-4 md-col-3 lg-col-2 flex-none">
         <div class="p2 workspace-ident">
             <p class="h5"><strong>{{ currentWorkspace.metadata.siteName }}</strong></p>
             <small>{{ currentWorkspace.metadata.siteUrl }}</small>
