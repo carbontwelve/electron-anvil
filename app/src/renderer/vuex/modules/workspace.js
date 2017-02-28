@@ -178,7 +178,7 @@ const actions = {
             console.log('setWorkspaceFile')
             // This is a brand new file!
             if (payload.exists === false) {
-                let fileName = slugify(payload.title)
+                let fileName = slugify(payload.title) + '.md'
                 let frontMatter = {}
                 Object.keys(payload).forEach((key, pos) => {
                     if (key !== 'stats' && key !== 'exists' && key !== 'content') {
@@ -186,8 +186,10 @@ const actions = {
                     }
                 })
                 let fileContent = matter.stringify(payload.content, frontMatter)
-                console.log('Saving to [' + fileName + '.md] the content:')
+                let savePath = fs.cwd('workspaces/' + state.current.name + '/posts') // @todo posts shouldn't be hard coded...
+                console.log('Saving to [' + fileName + '] the content:')
                 console.log(fileContent)
+                savePath.write(fileName, fileContent)
             }
         })
     }
@@ -219,9 +221,6 @@ const getters = {
     },
     getWorkspaceFiles: (state, getters) => {
         return state.current.files
-    },
-    getCurrentFile: (state) => {
-        return state.current.file
     }
 }
 
