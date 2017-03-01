@@ -77,7 +77,7 @@
                 this.getWorkspacePath().dir(basePath)
                 // Sync all files and order by date
                 this.$store.dispatch('syncWorkspaceFiles', {
-                    fileSystem: this.getWorkspacePath(),
+                    fileSystem: this.getWorkspacePath().cwd('src'),
                     collection: collection
                 })
 
@@ -103,7 +103,7 @@
             },
             saveChanges () {
                 this.file.save(
-                    fs.cwd('workspaces/' + this.currentWorkspace.name + '/' + this.file.collection),
+                    fs.cwd('workspaces/' + this.currentWorkspace.name + '/' + this.file.collection + '/src'),
                     'md'
                 )
                 // let _vm = this
