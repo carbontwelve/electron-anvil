@@ -15,11 +15,19 @@
                 </ul>
             </div>
         </div>
+
+        <div class="file-editor-toolbar flex items-center">
+            <ui-icon icon="format_bold"></ui-icon>
+            <ui-icon icon="format_italic"></ui-icon>
+            <ui-icon icon="insert_link"></ui-icon>
+            <ui-icon icon="insert_photo"></ui-icon>
+        </div>
+
         <current-page></current-page>
     </div>
 </template>
 
-<script>
+<script type="text/babel">
     import { mapGetters } from 'vuex'
     import UiButton from 'keen-ui/lib/UiButton'
     import UiIconButton from 'keen-ui/lib/UiIconButton'
@@ -80,11 +88,22 @@
     }
 </script>
 
-<style>
+<style rel="stylesheet/scss" lang="scss">
     input.title{
         height: 3rem;
         width: 100%;
         border: none;
         color: #505050;
+        border-bottom: 1px solid rgba(76, 126, 189, 0.49);
+    }
+    .file-editor-toolbar{
+        background: #f3f3f3;
+        height: 33px;
+        border-bottom: 1px solid #e4e4e4;
+        color: #505050;
+        padding: 0 0.3rem;
+        span.ui-icon{
+            margin-right: 0.5rem
+        }
     }
 </style>
