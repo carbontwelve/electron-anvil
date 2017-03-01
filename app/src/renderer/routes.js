@@ -29,6 +29,14 @@ export default [
         }
     },
     {
+        path: '/collection/:collection/taxonomy',
+        name: 'collection-taxonomy-page',
+        component: require('components/CollectionPageView'),
+        meta: {
+            name: 'Site'
+        }
+    },
+    {
         path: '/collection/:collection/edit/:file?',
         name: 'edit-file-page',
         component: require('components/FileEditorView'),

@@ -13,7 +13,7 @@
                     </a>
                     <ul class="list-reset" v-if="i.children.length > 0">
                         <li v-for="c in i.children">
-                            <router-link :to="c.route">{{ c.title }}</router-link>
+                            <router-link :to="c.route" exact>{{ c.title }}</router-link>
                         </li>
                     </ul>
                 </li>
@@ -60,8 +60,8 @@
                         title: k,
                         children: [
                             {title: 'All ' + k, route: {name: 'collection-page', params: {collection: k}}},
-                            {title: 'New ' + k, route: {name: ''}},
-                            {title: 'Taxonomy', route: {name: ''}}
+                            {title: 'New ' + k, route: {name: 'edit-file-page', params: {collection: k, page: ''}}},
+                            {title: 'Taxonomy', route: {name: 'collection-taxonomy-page', params: {collection: k}}}
                         ]
                     })
                     console.log(k + ' => ' + this.currentWorkspace.collections.items[k])
@@ -114,6 +114,19 @@
 
                     &:hover{
                         color: inherit;
+                    }
+                    &.router-link-active{
+                        color: inherit;
+                        position: relative;
+                        &::before{
+                            position: absolute;
+                            content: "";
+                            width: 3px;
+                            height: 100%;
+                            border-radius: 10px;
+                            background-color: rgb(226, 102, 74);
+                            left: -13px;
+                        }
                     }
                 }
             }
