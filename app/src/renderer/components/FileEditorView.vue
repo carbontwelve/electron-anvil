@@ -103,14 +103,9 @@
             },
             saveChanges () {
                 this.file.save(
-                    fs.cwd('workspaces/' + this.currentWorkspace.name + '/' + this.file.collection + '/src'),
+                    fs.cwd('workspaces/' + this.currentWorkspace.name + '/src/' + this.file.collection),
                     'md'
                 )
-                // let _vm = this
-                // this.$store.dispatch('setWorkspaceFile', this.file).then((f) => {
-                //     _vm.file = JSON.parse(JSON.stringify(f))
-                //     _vm.isModified = false
-                // })
             }
         }
     }
