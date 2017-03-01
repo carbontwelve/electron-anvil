@@ -45,6 +45,30 @@ export default [
         }
     },
     {
+        path: '/settings/general',
+        name: 'general-settings-page',
+        component: require('components/GeneralSettingsPageView'),
+        meta: {
+            name: 'Settings'
+        }
+    },
+    {
+        path: '/settings/meta-data',
+        name: 'meta-data-settings-page',
+        component: require('components/MetaDataSettingsPageView'),
+        meta: {
+            name: 'Settings'
+        }
+    },
+    {
+        path: '/settings/collections',
+        name: 'collections-settings-page',
+        component: require('components/CollectionsSettingsPageView'),
+        meta: {
+            name: 'Settings'
+        }
+    },
+    {
         path: '/system',
         name: 'system-page',
         component: require('components/SystemPageView'),

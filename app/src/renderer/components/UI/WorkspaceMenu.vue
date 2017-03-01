@@ -23,9 +23,9 @@
                     Settings <i class="material-icons">arrow_drop_down</i>
                 </a>
                 <ul class="list-reset">
-                    <li><a href="#">General</a></li>
-                    <li><a href="#">Collections</a></li>
-                    <li><a href="#">Meta Data</a></li>
+                    <li><router-link :to="{name: 'general-settings-page'}" exact>General</router-link></li>
+                    <li><router-link :to="{name: 'collections-settings-page'}" exact>Collections</router-link></li>
+                    <li><router-link :to="{name: 'meta-data-settings-page'}" exact>Meta Data</router-link></li>
                 </ul>
             </li>
         </ul>
