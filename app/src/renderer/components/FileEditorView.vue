@@ -2,7 +2,7 @@
     <div class="file-editor">
         <div class="workspace-header-bar flex items-center clearfix">
             <p class="h3 flex-auto">
-                <input type="text" v-model="file.title" class="title h3" placeholder="Your post title">
+                <input v-if="file.meta" type="text" v-model="file.meta.title" class="title h3" placeholder="Your post title">
             </p>
             <div class="ml2">
                 <ul class="list-reset">
@@ -27,6 +27,7 @@
 </template>
 
 <script type="text/babel">
+    import fs from 'fs-jetpack'
     import CodeMirrorMeta from 'vue-codemirror/metas'
     import VueCodeMirror from 'vue-codemirror/codemirror.vue'
     import { mapGetters } from 'vuex'
@@ -79,10 +80,13 @@
                     fileSystem: this.getWorkspacePath(),
                     collection: collection
                 })
-                let _vm = this
+
+                //
                 // Load file into state
+                //
+                let _vm = this
                 this.$store.dispatch('getWorkspaceFile', this.$route.params.file || '').then((f) => {
-                    _vm.file = JSON.parse(JSON.stringify(f))
+                    _vm.file = f // JSON.parse(JSON.stringify(f))
                     let collection = _vm.currentWorkspace.collections.items[_vm.$route.params.collection]
                     let ext = collection.split('.')
                     ext = ext[ext.length - 1]
@@ -90,6 +94,7 @@
                     if (mode) {
                         _vm.editorOption.mode.name = mode.mode
                     }
+                    _vm.file.collection = _vm.$route.params.collection
                 }).then(() => {
                     _vm.$watch('file', () => {
                         _vm.isModified = true
@@ -97,11 +102,15 @@
                 })
             },
             saveChanges () {
-                let _vm = this
-                this.$store.dispatch('setWorkspaceFile', this.file).then((f) => {
-                    _vm.file = JSON.parse(JSON.stringify(f))
-                    _vm.isModified = false
-                })
+                this.file.save(
+                    fs.cwd('workspaces/' + this.currentWorkspace.name + '/' + this.file.collection),
+                    'md'
+                )
+                // let _vm = this
+                // this.$store.dispatch('setWorkspaceFile', this.file).then((f) => {
+                //     _vm.file = JSON.parse(JSON.stringify(f))
+                //     _vm.isModified = false
+                // })
             }
         }
     }

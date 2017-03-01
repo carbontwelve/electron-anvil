@@ -10,7 +10,7 @@
                     <li v-for="item in getWorkspaceFiles.items">
                         <a href="#" class="p1 block" @click="setCurrentFile(item, $event)" :class="{'is-selected': currentFile === item}">
                             <span class="h3">{{ getWorkspaceFiles.loaded[item].title }}</span><br>
-                            <small class="muted">Draft Post, least edited 6 days ago.</small>
+                            <small class="muted">Draft Post, least edited 6 days ago. {{ getWorkspaceFiles.loaded[item].stats.name }}</small>
                         </a>
                     </li>
                 </ul>

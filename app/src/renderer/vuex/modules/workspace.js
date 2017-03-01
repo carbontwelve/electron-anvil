@@ -31,12 +31,56 @@ const types = {
 }
 
 let defaultFile = {
-    name: 'untitled',
-    collection: 'posts',
+    name: null,
+    path: null,
+    collection: null,
     raw: '---\ntitle: Hello World!\ndraft: true\n---\nAn unfinished article...',
     content: '',
     html: '',
-    meta: {}
+    meta: {},
+    stats: {},
+    exists: false
+}
+
+let WorkspaceFile = (path) => {
+    let pMethods = {
+        ...defaultFile,
+        save (p, ext) {
+            // let fileContent = matter.stringify(this.content, this.meta)
+            // If this is not a file that exists, we need to identify its filename and check we are not over-writing
+            // an existing file.
+            if (this.exists === false) {
+                this.name = slugify(this.meta.title)
+                let fileVersion = 1
+                let baseFileName = this.name
+
+                while (p.exists(this.name + '.' + ext) !== false) {
+                    this.name = baseFileName + '-' + fileVersion
+                    fileVersion++
+                }
+            }
+            this.exists = true
+            this.raw = matter.stringify(this.content, this.meta)
+            console.log('Saving to [' + p.path(this.name + '.' + ext) + ']')
+            p.write(this.name + '.' + ext, this.raw)
+        },
+        load (p) {
+            this.raw = fs.read(p)
+            this.exists = true
+            this.stats = fs.inspect(p, {checksum: 'sha256', times: true})
+        }
+    }
+
+    // path is passed if this is a file that exists
+    if (path && fs.exists(path) !== false) {
+        pMethods.load(path)
+    }
+
+    let parsedFileContent = matter(pMethods.raw)
+    pMethods.content = parsedFileContent.content
+    pMethods.meta = parsedFileContent.data
+
+    return pMethods
 }
 
 let defaultWorkspace = {
@@ -127,6 +171,9 @@ const actions = {
             for (let i = 0; i < len; i++) {
                 let f = payload.fileSystem.path(files[i])
                 if (f) {
+                    let n = new WorkspaceFile(f)
+                    console.log(n)
+                    // let newFile = getDefaultFile()
                     let parsedFileContent = matter(fs.read(f))
                     let tmp = parsedFileContent.data
                     tmp.content = parsedFileContent.content
@@ -148,15 +195,15 @@ const actions = {
         return new Promise((resolve, reject) => {
             // If this is a new file
             if (!name || (name && name.length < 1)) {
-                let workspace = state.items.find((i) => {
-                    return i.name === state.current.name
-                })
-                let parsedFileContent = matter(JSON.parse(JSON.stringify(workspace.files.template)))
-                let f = parsedFileContent.data
-                f.content = parsedFileContent.content
-                f.stats = {}
-                f.exists = false
-                return resolve(f)
+                // let workspace = state.items.find((i) => {
+                //     return i.name === state.current.name
+                // })
+                // let newFile = getDefaultFile()
+                // let parsedFileContent = matter(newFile.raw)
+                // newFile.meta = parsedFileContent.data
+                // newFile.content = parsedFileContent.content
+                // return resolve(newFile)
+                return resolve(new WorkspaceFile())
             } else {
                 let f = state.current.files.loaded[name]
                 if (f) {
@@ -172,7 +219,7 @@ const actions = {
             console.log('setWorkspaceFile')
             // This is a brand new file!
             if (payload.exists === false) {
-                let fileName = slugify(payload.title) + '.md'
+                let fileName = slugify(payload.title)
                 let frontMatter = {}
                 Object.keys(payload).forEach((key, pos) => {
                     if (key !== 'stats' && key !== 'exists' && key !== 'content') {
@@ -181,8 +228,14 @@ const actions = {
                 })
                 let fileContent = matter.stringify(payload.content, frontMatter)
                 let savePath = fs.cwd('workspaces/' + state.current.name + '/posts') // @todo posts shouldn't be hard coded...
-                console.log('Saving to [' + fileName + '] the content:')
-                console.log(fileContent)
+                let fileVersion = 1
+                let baseFileName = fileName
+                fileName += '.md'
+                while (savePath.exists(fileName) !== false) {
+                    fileName = baseFileName + '-' + fileVersion + '.md'
+                    fileVersion++
+                }
+                console.log('Saving to [' + fileName + ']')
                 savePath.write(fileName, fileContent)
             }
         })
@@ -218,14 +271,16 @@ const getters = {
     }
 }
 
-export function getDefaultWorkspace () {
+let getDefaultWorkspace = function () {
     console.log('getDefaultWorkspace')
     return JSON.parse(JSON.stringify(defaultWorkspace))
 }
 
-export function getDefaultFile () {
+let getDefaultFile = function () {
     console.log('getDefaultFilee')
     return JSON.parse(JSON.stringify(defaultFile))
 }
+
+export { getDefaultFile, getDefaultWorkspace }
 
 export default {state, mutations, actions, getters, types}
