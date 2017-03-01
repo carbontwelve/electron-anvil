@@ -30,14 +30,14 @@ const types = {
     SET_CURRENT_FILES_LOADED: 'SET_CURRENT_FILES_LOADED'
 }
 
-// let defaultFile = {
-//     name: 'untitled',
-//     collection: 'posts',
-//     raw: '---\ntitle: Hello World!\ndraft: true\n---\nAn unfinished article...',
-//     content: '',
-//     html: '',
-//     meta: {}
-// }
+let defaultFile = {
+    name: 'untitled',
+    collection: 'posts',
+    raw: '---\ntitle: Hello World!\ndraft: true\n---\nAn unfinished article...',
+    content: '',
+    html: '',
+    meta: {}
+}
 
 let defaultWorkspace = {
     name: '',
@@ -221,6 +221,11 @@ const getters = {
 export function getDefaultWorkspace () {
     console.log('getDefaultWorkspace')
     return JSON.parse(JSON.stringify(defaultWorkspace))
+}
+
+export function getDefaultFile () {
+    console.log('getDefaultFilee')
+    return JSON.parse(JSON.stringify(defaultFile))
 }
 
 export default {state, mutations, actions, getters, types}
