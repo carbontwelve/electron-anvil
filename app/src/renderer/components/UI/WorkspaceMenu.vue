@@ -1,8 +1,13 @@
 <template>
     <div class="workspace-menu sm-col-4 md-col-3 lg-col-2 flex-none">
-        <div class="p2 workspace-ident">
-            <p class="h5"><strong>{{ currentWorkspace.metadata.siteName }}</strong></p>
-            <small>{{ currentWorkspace.metadata.siteUrl }}</small>
+        <div class="p2 workspace-ident flex items-center">
+            <div class="flex-auto">
+                <p class="h5"><strong>{{ currentWorkspace.metadata.siteName }}</strong></p>
+                <small>{{ currentWorkspace.metadata.siteUrl }}</small>
+            </div>
+            <div>
+                <ui-button size="small" raised v-on:click="buildWorkspace">Build</ui-button>
+            </div>
         </div>
         <ul class="list-reset workspace-nav py2">
             <template v-for="i in menuItems">
@@ -34,6 +39,7 @@
 
 <script>
     import { mapGetters } from 'vuex'
+    import { execFile } from 'child_process'
     export default {
         name: 'workspace-menu',
         data () {
@@ -66,6 +72,11 @@
                     })
                     console.log(k + ' => ' + this.currentWorkspace.collections.items[k])
                 })
+            },
+            buildWorkspace () {
+                // https://nodejs.org/api/child_process.html
+                // @todo
+                console.log(execFile('npm', ['-v']))
             }
         }
     }
