@@ -22,12 +22,13 @@
             <ui-icon icon="insert_link"></ui-icon>
             <ui-icon icon="insert_photo"></ui-icon>
         </div>
-
-        <current-page></current-page>
+        <VueCodeMirror :options="editorOption" :value="file.content" v-on:changed="(e) => {file.content = e}"></VueCodeMirror>
     </div>
 </template>
 
 <script type="text/babel">
+    // import CodeMirrorMeta from 'vue-codemirror/metas'
+    import VueCodeMirror from 'vue-codemirror/codemirror.vue'
     import { mapGetters } from 'vuex'
     import UiButton from 'keen-ui/lib/UiButton'
     import UiIconButton from 'keen-ui/lib/UiIconButton'
@@ -37,10 +38,21 @@
         components: {
             UiButton,
             UiIconButton,
-            CurrentPage
+            CurrentPage,
+            VueCodeMirror
         },
         data () {
             return {
+                editorOption: {
+                    tabSize: 4,
+                    styleActiveLine: true,
+                    lineNumbers: true,
+                    foldGutter: true,
+                    line: true,
+                    mode: {name: 'markdown'},
+                    theme: 'solarized light',
+                    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+                },
                 file: {},
                 isModified: false
             }
@@ -71,6 +83,10 @@
                 // Load file into state
                 this.$store.dispatch('getWorkspaceFile', this.$route.params.file || '').then((f) => {
                     _vm.file = JSON.parse(JSON.stringify(f))
+                    // let mode = CodeMirrorMeta.findModeByExtension(_vm.file.attributes.ext)
+                    // if (mode) {
+                    //     _vm.editorOption.mode.name = mode.mode
+                    // }
                 }).then(() => {
                     _vm.$watch('file', () => {
                         _vm.isModified = true
