@@ -15,6 +15,7 @@
                 </ul>
             </div>
         </div>
+        <current-page></current-page>
     </div>
 </template>
 
@@ -22,11 +23,13 @@
     import { mapGetters } from 'vuex'
     import UiButton from 'keen-ui/lib/UiButton'
     import UiIconButton from 'keen-ui/lib/UiIconButton'
+    import CurrentPage from './LandingPageView/CurrentPage'
     export default {
         name: 'file-editor-page',
         components: {
             UiButton,
-            UiIconButton
+            UiIconButton,
+            CurrentPage
         },
         data () {
             return {
