@@ -9,7 +9,7 @@
                 <ul class="list-reset">
                     <li v-for="item in getWorkspaceFiles.items">
                         <a href="#" class="p1 block" @click="setCurrentFile(item, $event)" :class="{'is-selected': currentFile === item}">
-                            <span class="h3">{{ getWorkspaceFiles.loaded[item].title }}</span><br>
+                            <span class="h3">{{ getWorkspaceFiles.loaded[item].meta.title }}</span><br>
                             <small class="muted">Draft Post, least edited 6 days ago. {{ getWorkspaceFiles.loaded[item].stats.name }}</small>
                         </a>
                     </li>
@@ -71,7 +71,7 @@
                 e.preventDefault()
                 this.currentFile = file
                 let f = this.getWorkspaceFiles.loaded[file]
-                this.currentPreview = '<h1>' + f.title + '</h1><br>' + f.content
+                this.currentPreview = '<h1>' + f.meta.title + '</h1><br>' + f.content
             },
             editCurrentFile () {
                 this.$router.push({name: 'edit-file-page', params: {collection: this.$route.params.collection, file: this.currentFile}})
