@@ -32,6 +32,7 @@ const types = {
 
 let defaultFile = {
     name: null,
+    ext: null,
     path: null,
     collection: null,
     raw: '---\ntitle: Hello World!\ndraft: true\n---\nAn unfinished article...',
@@ -43,12 +44,27 @@ let defaultFile = {
 }
 
 let WorkspaceFile = (path) => {
+    // @see http://stackoverflow.com/a/680982/1225977
+    let splitFileName = (fN) => {
+        return {
+            name: fN.slice(0, -(fN.split('.').pop().length + 1)), // the + 1 on the ext length is to account for the .
+            ext: fN.split('.').pop()
+        }
+    }
+
+    let statFile = (p) => {
+        pMethods.stats = fs.inspect(p, {checksum: 'sha256', times: true})
+        let tmp = splitFileName(pMethods.stats.name)
+        pMethods.name = tmp.name
+        pMethods.ext = tmp.ext
+    }
+
     let pMethods = {
         ...defaultFile,
         save (p, ext) {
-            // let fileContent = matter.stringify(this.content, this.meta)
-            // If this is not a file that exists, we need to identify its filename and check we are not over-writing
-            // an existing file.
+            if (ext) {
+                this.ext = ext
+            }
             if (this.exists === false) {
                 this.name = slugify(this.meta.title)
                 let fileVersion = 1
@@ -61,13 +77,14 @@ let WorkspaceFile = (path) => {
             }
             this.exists = true
             this.raw = matter.stringify(this.content, this.meta)
-            console.log('Saving to [' + p.path(this.name + '.' + ext) + ']')
-            p.write(this.name + '.' + ext, this.raw)
+            console.log('Saving to [' + p.path(this.name + '.' + this.ext) + ']')
+            p.write(this.name + '.' + this.ext, this.raw)
+            statFile(p.path(this.name + '.' + this.ext))
         },
         load (p) {
             this.raw = fs.read(p)
             this.exists = true
-            this.stats = fs.inspect(p, {checksum: 'sha256', times: true})
+            statFile(p)
         }
     }
 
@@ -171,15 +188,7 @@ const actions = {
             for (let i = 0; i < len; i++) {
                 let f = payload.fileSystem.path(files[i])
                 if (f) {
-                    let n = new WorkspaceFile(f)
-                    console.log(n)
-                    // let newFile = getDefaultFile()
-                    let parsedFileContent = matter(fs.read(f))
-                    let tmp = parsedFileContent.data
-                    tmp.content = parsedFileContent.content
-                    tmp.stats = payload.fileSystem.inspect(f, {checksum: 'sha256', times: true})
-                    tmp.exists = true
-                    commit(types.SET_CURRENT_FILES_LOADED, {key: state.current.files.items[i], value: tmp})
+                    commit(types.SET_CURRENT_FILES_LOADED, {key: state.current.files.items[i], value: new WorkspaceFile(f)})
                 }
             }
         }
@@ -213,33 +222,33 @@ const actions = {
                 }
             }
         })
-    },
-    setWorkspaceFile ({state, dispatch, commit}, payload) {
-        return new Promise((resolve, reject) => {
-            console.log('setWorkspaceFile')
-            // This is a brand new file!
-            if (payload.exists === false) {
-                let fileName = slugify(payload.title)
-                let frontMatter = {}
-                Object.keys(payload).forEach((key, pos) => {
-                    if (key !== 'stats' && key !== 'exists' && key !== 'content') {
-                        frontMatter[key] = payload[key]
-                    }
-                })
-                let fileContent = matter.stringify(payload.content, frontMatter)
-                let savePath = fs.cwd('workspaces/' + state.current.name + '/posts') // @todo posts shouldn't be hard coded...
-                let fileVersion = 1
-                let baseFileName = fileName
-                fileName += '.md'
-                while (savePath.exists(fileName) !== false) {
-                    fileName = baseFileName + '-' + fileVersion + '.md'
-                    fileVersion++
-                }
-                console.log('Saving to [' + fileName + ']')
-                savePath.write(fileName, fileContent)
-            }
-        })
     }
+    // setWorkspaceFile ({state, dispatch, commit}, payload) {
+    //     return new Promise((resolve, reject) => {
+    //         console.log('setWorkspaceFile')
+    //         // This is a brand new file!
+    //         if (payload.exists === false) {
+    //             let fileName = slugify(payload.title)
+    //             let frontMatter = {}
+    //             Object.keys(payload).forEach((key, pos) => {
+    //                 if (key !== 'stats' && key !== 'exists' && key !== 'content') {
+    //                     frontMatter[key] = payload[key]
+    //                 }
+    //             })
+    //             let fileContent = matter.stringify(payload.content, frontMatter)
+    //             let savePath = fs.cwd('workspaces/' + state.current.name + '/posts') // @todo posts shouldn't be hard coded...
+    //             let fileVersion = 1
+    //             let baseFileName = fileName
+    //             fileName += '.md'
+    //             while (savePath.exists(fileName) !== false) {
+    //                 fileName = baseFileName + '-' + fileVersion + '.md'
+    //                 fileVersion++
+    //             }
+    //             console.log('Saving to [' + fileName + ']')
+    //             savePath.write(fileName, fileContent)
+    //         }
+    //     })
+    // }
 }
 
 const getters = {
