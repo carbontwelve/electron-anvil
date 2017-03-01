@@ -27,7 +27,7 @@
 </template>
 
 <script type="text/babel">
-    // import CodeMirrorMeta from 'vue-codemirror/metas'
+    import CodeMirrorMeta from 'vue-codemirror/metas'
     import VueCodeMirror from 'vue-codemirror/codemirror.vue'
     import { mapGetters } from 'vuex'
     import UiButton from 'keen-ui/lib/UiButton'
@@ -83,10 +83,13 @@
                 // Load file into state
                 this.$store.dispatch('getWorkspaceFile', this.$route.params.file || '').then((f) => {
                     _vm.file = JSON.parse(JSON.stringify(f))
-                    // let mode = CodeMirrorMeta.findModeByExtension(_vm.file.attributes.ext)
-                    // if (mode) {
-                    //     _vm.editorOption.mode.name = mode.mode
-                    // }
+                    let collection = _vm.currentWorkspace.collections.items[_vm.$route.params.collection]
+                    let ext = collection.split('.')
+                    ext = ext[ext.length - 1]
+                    let mode = CodeMirrorMeta.findModeByExtension(ext)
+                    if (mode) {
+                        _vm.editorOption.mode.name = mode.mode
+                    }
                 }).then(() => {
                     _vm.$watch('file', () => {
                         _vm.isModified = true
