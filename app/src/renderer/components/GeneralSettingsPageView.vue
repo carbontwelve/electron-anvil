@@ -12,10 +12,16 @@
 
 <script>
     import CurrentPage from './LandingPageView/CurrentPage'
+    import { mapGetters } from 'vuex'
     export default {
         name: 'general-settings-page',
         components: {
             CurrentPage
+        },
+        computed: {
+            ...mapGetters([
+                'currentWorkspace'
+            ])
         }
     }
 </script>
