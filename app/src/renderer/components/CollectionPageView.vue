@@ -96,6 +96,7 @@
     .workspace-content{
         height: calc(100vh - 68px);
         .content-list{
+            overflow-y: auto;
             height: 100%;
             border-right: 1px solid #e2e2e2;
             li{
@@ -118,6 +119,10 @@
                     }
                 }
             }
+        }
+        .content-preview{
+            height: 100%;
+            overflow-y: auto;
         }
     }
 </style>
