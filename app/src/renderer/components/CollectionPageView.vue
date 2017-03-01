@@ -77,7 +77,7 @@
                 this.$router.push({name: 'edit-file-page', params: {collection: this.$route.params.collection, file: this.currentFile}})
             },
             createNewFile () {
-                this.$router.push({name: 'edit-file-page', params: {collection: this.$route.params.collection, file: ''}})
+                this.$router.push({name: 'edit-file-page', params: {collection: this.$route.params.collection, file: undefined}})
             }
         }
     }
