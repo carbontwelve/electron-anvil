@@ -27,8 +27,7 @@ const types = {
     UPDATE_WORKSPACE: 'UPDATE_WORKSPACE',
     RESET_CURRENT_FILES: 'RESET_CURRENT_FILES',
     SET_CURRENT_FILES: 'SET_CURRENT_FILES',
-    SET_CURRENT_FILES_LOADED: 'SET_CURRENT_FILES_LOADED',
-    SET_CURRENT_FILE: 'SET_CURRENT_FILE'
+    SET_CURRENT_FILES_LOADED: 'SET_CURRENT_FILES_LOADED'
 }
 
 // let defaultFile = {
@@ -107,9 +106,6 @@ const mutations = {
     },
     [types.SET_CURRENT_FILES_LOADED] (state, payload) {
         state.current.files.loaded[payload.key] = payload.value
-    },
-    [types.SET_CURRENT_FILE] (state, payload) {
-        state.current.file = payload
     }
 }
 
@@ -160,12 +156,10 @@ const actions = {
                 f.content = parsedFileContent.content
                 f.stats = {}
                 f.exists = false
-                commit(types.SET_CURRENT_FILE, f)
                 return resolve(f)
             } else {
                 let f = state.current.files.loaded[name]
                 if (f) {
-                    commit(types.SET_CURRENT_FILE, f)
                     return resolve(f)
                 } else {
                     return reject('No file with the name [' + name + '] could be found.')
