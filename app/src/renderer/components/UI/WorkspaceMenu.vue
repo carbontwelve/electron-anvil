@@ -5,9 +5,7 @@
                 <p class="h5"><strong>{{ currentWorkspace.metadata.siteName }}</strong></p>
                 <small>{{ currentWorkspace.metadata.siteUrl }}</small>
             </div>
-            <div>
-                <ui-button size="small" raised v-on:click="buildWorkspace">Build</ui-button>
-            </div>
+            <build-button></build-button>
         </div>
         <ul class="list-reset workspace-nav py2">
             <template v-for="i in menuItems">
@@ -25,12 +23,22 @@
             </template>
             <li>
                 <a href="" class="bold">
+                    Layouts <i class="material-icons">arrow_drop_down</i>
+                </a>
+                <ul class="list-reset">
+                    <li><router-link :to="{name: 'general-settings-page'}" exact>All Layouts</router-link></li>
+                    <li><router-link :to="{name: 'collections-settings-page'}" exact>New Layout</router-link></li>
+                </ul>
+            </li>
+            <li>
+                <a href="" class="bold">
                     Settings <i class="material-icons">arrow_drop_down</i>
                 </a>
                 <ul class="list-reset">
                     <li><router-link :to="{name: 'general-settings-page'}" exact>General</router-link></li>
                     <li><router-link :to="{name: 'collections-settings-page'}" exact>Collections</router-link></li>
                     <li><router-link :to="{name: 'meta-data-settings-page'}" exact>Meta Data</router-link></li>
+                    <li><router-link :to="{name: 'meta-data-settings-page'}" exact>Plugins</router-link></li>
                 </ul>
             </li>
         </ul>
@@ -39,13 +47,16 @@
 
 <script>
     import { mapGetters } from 'vuex'
-    import { execFile } from 'child_process'
+    import BuildButton from './BuildButton'
     export default {
         name: 'workspace-menu',
         data () {
             return {
                 menuItems: []
             }
+        },
+        components: {
+            BuildButton
         },
         computed: {
             ...mapGetters([
@@ -72,11 +83,6 @@
                     })
                     console.log(k + ' => ' + this.currentWorkspace.collections.items[k])
                 })
-            },
-            buildWorkspace () {
-                // https://nodejs.org/api/child_process.html
-                // @todo
-                console.log(execFile('npm', ['-v']))
             }
         }
     }
